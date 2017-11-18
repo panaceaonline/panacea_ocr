@@ -1,0 +1,5 @@
+Image File: /home/rustam/projects/panacea_ocr/data/blood.png
+Angle bins: [[0.50279329608938206], [90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0], [], []]
+Estimated Angle: 90.0
+Average Deviation from pi/4: 44.9613235926
+

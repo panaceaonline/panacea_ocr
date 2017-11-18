@@ -5,3 +5,5 @@ alyn
 numpy
 scipy
 scikit-image
+
+colorama
