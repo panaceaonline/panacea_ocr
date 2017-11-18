@@ -4,6 +4,8 @@
 import sys
 import os
 import json
+import shutil
+import hashlib
 sys.path.append("./lib")
 
 from colorama import *
@@ -29,7 +31,7 @@ def rotateImage(image_input):
     sd = SkewDetect(
     	input_file=image_input,
     	batch_path='./',
-    	output_file='./out/1.rotate.txt',
+    	output_file=dir_out + '1.rotate.txt',
     	display_output='No',
         sigma=3.0,
         num_peaks=20,
@@ -37,7 +39,7 @@ def rotateImage(image_input):
         )
     sd.run()
 
-    image_out = './out/1.rotated.png'
+    image_out = dir_out + '1.rotated.png'
 
     d = Deskew(
     	input_file=image_input,
@@ -59,7 +61,7 @@ def cropImage(image_input):
 
     # from process_image import crop_morphology
 
-    image_out = './out/2.crop.png'
+    image_out = dir_out + '2.crop.png'
 
     # ТОДО переписать на функцию
     os.system("lib/crop_morphology.py {} {}".format(image_input, image_out))
@@ -76,10 +78,24 @@ def binarImage(image_input):
     python lib/process_image.py out/2.crop.png out/3.binar.png
     """
 
-    image_out = './out/3.binar.png'
+    image_out = dir_out + '3.binar.png'
 
     # ТОДО переписать на функцию
     os.system("lib/process_image.py {} {}".format(image_input, image_out))
+
+    return image_out
+
+
+@decor_function_call
+def textCleaner(image_input):
+    """
+    Используем шел скрипт textcleaner
+    http://www.fmwconcepts.com/imagemagick/textcleaner/index.php
+    """
+
+    image_out = dir_out + '3.clean.png'
+
+    os.system("sh lib/textcleaner {} {}".format(image_input, image_out))
 
     return image_out
 
@@ -92,22 +108,24 @@ def extractTextTesseract(image_input):
     from PIL import Image
     import pytesseract
 
-    out_text = pytesseract.image_to_string(Image.open(image_input), lang='rus')
+    # def countWords(text):
 
+    out_text = pytesseract.image_to_string(Image.open(image_input), lang='rus')
+    out_text = out_text.replace('\n\n','\n')
     print (out_text)
 
     return out_text
 
 
-def rescaleImage(image_input):
+def rescaleImage(image_input, width=1000):
     """
     Увеличиваем размерчик
     convert example.png -resize 200 example.png
     """
 
-    image_out = './out/rescale.png'
+    image_out = dir_out + 'rescale.png'
 
-    os.system("convert {} -resize 2000 -auto-level {}".format(image_input, image_out))
+    os.system("convert {} -resize {} -auto-level {}".format(image_input, width, image_out))
 
     return image_out
 
@@ -125,16 +143,27 @@ if __name__ == '__main__':
     if image_input:
         print(image_input)
 
-        # rescaled = rescaleImage(image_input)
+        # делаем папку с мд5 именем по файлу
+        dir_out = 'out/'
+        dir_out += hashlib.md5(image_input).hexdigest() + '/'
+        print (dir_out)
+
+        if os.path.exists(dir_out):
+            shutil.rmtree(dir_out)
+        os.makedirs(dir_out)
+
+        # начинаем обработку
+        # rescaleInput = rescaleImage(image_input, width=2000)
+
         image1step = rotateImage(image_input=image_input)
         text = extractTextTesseract(image1step)
         print (len(text))
 
         image2step = cropImage(image_input=image1step)
-        rescaled = rescaleImage(image2step)
+        rescaled = rescaleImage(image2step, width=1000)
         text = extractTextTesseract(rescaled)
         print (len(text))
 
-        image3step = binarImage(image_input=image2step)
+        image3step = textCleaner(image_input=rescaled)
         text = extractTextTesseract(image3step)
         print (len(text))
