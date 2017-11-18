@@ -33,7 +33,7 @@ def rotateImage(image_input):
     	display_output='No',
         sigma=3.0,
         num_peaks=20,
-        # plot_hough='yes',
+        plot_hough='No',
         )
     sd.run()
 
@@ -99,6 +99,20 @@ def extractTextTesseract(image_input):
     return out_text
 
 
+def rescaleImage(image_input):
+    """
+    Увеличиваем размерчик
+    convert example.png -resize 200 example.png
+    """
+
+    image_out = './out/rescale.png'
+
+    os.system("convert {} -resize 2000 -auto-level {}".format(image_input, image_out))
+
+    return image_out
+
+
+
 
 ##########################################################################
 if __name__ == '__main__':
@@ -111,11 +125,16 @@ if __name__ == '__main__':
     if image_input:
         print(image_input)
 
+        # rescaled = rescaleImage(image_input)
         image1step = rotateImage(image_input=image_input)
-        extractTextTesseract(image1step)
+        text = extractTextTesseract(image1step)
+        print (len(text))
 
         image2step = cropImage(image_input=image1step)
-        extractTextTesseract(image2step)
+        rescaled = rescaleImage(image2step)
+        text = extractTextTesseract(rescaled)
+        print (len(text))
 
         image3step = binarImage(image_input=image2step)
-        extractTextTesseract(image3step)
+        text = extractTextTesseract(image3step)
+        print (len(text))
