@@ -112,19 +112,37 @@ def extractTextTesseract(image_input):
 
     def countWords(text):
         "Чистим текст и остовляем слова больше 2х символов"
+
         import re
         clear = re.findall(u"[а-яА-Яa-zA-Z]+", text, re.UNICODE)
-        clear_big = [s for s in clear if len(s) > 2]
-        clear_big = sorted(clear_big)
+        clear_list = [s for s in clear if len(s) > 2]
+        clear_list = sorted(clear_list)
 
-        print(json.dumps(clear_big,  sort_keys=True, ensure_ascii=False))
-        clear_len = len(clear_big)
+        print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
+        clear_len = len(clear_list)
         print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
-        return clear_big, clear_len
+        return clear_list, clear_len
+
+    def correctWords(text_list):
+        "Отправляем наш сканированные список на проверку по словарю"
+
+        import nlp
+
+        cor = nlp.correct_words(text_list)
+        print(Fore.YELLOW + json.dumps(cor,  sort_keys=True, ensure_ascii=False))
+        cor_len = len(cor)
+        print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
+
+        return cor
+
 
     out_text = pytesseract.image_to_string(Image.open(image_input), lang='rus')
 
-    return out_text, countWords(out_text)
+    clear_list, clear_len = countWords(out_text)
+
+    correct_list = correctWords(clear_list)
+
+    return out_text
 
 
 def rescaleImage(image_input, width=1000):
@@ -177,5 +195,5 @@ if __name__ == '__main__':
         print (len(text))
 
         image3step = cleanImage(image_input=rescaled)
-        text, text_clear = extractTextTesseract(image3step)
+        text = extractTextTesseract(image3step)
         print (len(text))

@@ -19,6 +19,7 @@ https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-
 
 * выделение блока с текстом http://www.danvk.org/2015/01/07/finding-blocks-of-text-in-an-image-using-python-opencv-and-numpy.html
 
+
 ### Выделение таблиц
 
 * https://github.com/HazyResearch/TreeStructure/blob/master/table-extraction/tutorials/table-extraction-demo.ipynb
@@ -28,6 +29,12 @@ https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-
 ### Распознование текста
 
 * Питон тессеракт https://github.com/madmaze/pytesseract
+
+### Коррекция текста
+
+* проверка по словарю https://github.com/blatinier/pyhunspell
+* https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
+
 
 ### Распознование рукописных цифр
 

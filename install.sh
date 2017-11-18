@@ -5,5 +5,7 @@ sudo add-apt-repository ppa:alex-p/tesseract-ocr
 sudo apt-get update
 sudo apt install tesseract-ocr
 
+sudo apt install libhunspell-dev python-dev
+
 wget https://github.com/tesseract-ocr/tessdata/blob/master/rus.traineddata
 cp rus.traineddata /usr/share/tesseract-ocr/4.00/tessdata
