@@ -9,7 +9,9 @@ sys.path.append("./lib")
 from colorama import *
 init(autoreset=True)
 
+from lib.decorator import *
 
+@decor_function_call
 def rotateImage(image_input):
     """
     Ищем угол поворота картинки
@@ -48,6 +50,7 @@ def rotateImage(image_input):
     return image_out
 
 
+@decor_function_call
 def cropImage(image_input):
     """
     Кропаем картинку, ищем текстовый блок
@@ -66,6 +69,7 @@ def cropImage(image_input):
     return image_out
 
 
+@decor_function_call
 def binarImage(image_input):
     """
     Биномиризация картинки, ч.б.
@@ -80,6 +84,19 @@ def binarImage(image_input):
     return image_out
 
 
+# @decor_function_call
+def extractTextTesseract(image_input):
+    """
+    Распознаем текст tesseract-ocr
+    """
+    from PIL import Image
+    import pytesseract
+
+    out_text = pytesseract.image_to_string(Image.open(image_input), lang='rus')
+
+    print (out_text)
+
+    return out_text
 
 
 
@@ -94,9 +111,11 @@ if __name__ == '__main__':
     if image_input:
         print(image_input)
 
-        # отправляем в обработку
-        image1step = rotateImage(image_input)
+        image1step = rotateImage(image_input=image_input)
+        extractTextTesseract(image1step)
 
-        image2step = cropImage(image1step)
+        image2step = cropImage(image_input=image1step)
+        extractTextTesseract(image2step)
 
-        image3step = binarImage(image2step)
+        image3step = binarImage(image_input=image2step)
+        extractTextTesseract(image3step)

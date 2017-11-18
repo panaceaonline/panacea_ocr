@@ -34,6 +34,16 @@ https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-
 
 # INSTALL
 
+python 2.7
+
+### venv
+
+```
+virtualenv venv -p python2
+source venv/bin/activate
+
+```
+
 ### Tesseract
 Tesseract - распознование текста
 
