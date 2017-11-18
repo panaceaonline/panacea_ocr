@@ -11,7 +11,7 @@ https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-
 
 ### 3 Биноризация
 
-`python lib/process_image.py out/1.rotated.jpg out/3.binar.jpg`
+`python lib/process_image.py out/2.crop.png out/3.binar.png`
 
 # Работа с текстом
 
@@ -25,7 +25,7 @@ https://www.pyimagesearch.com/2014/09/01/build-kick-ass-mobile-document-scanner-
 
 ### Распознование текста
 
-* Питон тессеракт https://github.com/sirfz/tesserocr
+* Питон тессеракт https://github.com/madmaze/pytesseract
 
 ### Распознование рукописных цифр
 

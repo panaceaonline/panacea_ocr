@@ -1,2 +1,7 @@
 pytesseract
 Pillow
+alyn
+
+numpy
+scipy
+scikit-image
