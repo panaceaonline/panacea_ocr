@@ -26,7 +26,7 @@ def rotateImage(image_input):
     sd = SkewDetect(
     	input_file=image_input,
     	batch_path='./',
-    	output_file='./out/rotate.txt',
+    	output_file='./out/1.rotate.txt',
     	display_output='No',
         sigma=3.0,
         num_peaks=20,
@@ -34,15 +34,34 @@ def rotateImage(image_input):
         )
     sd.run()
 
+    image_out = './out/1.rotated.jpg'
+
     d = Deskew(
     	input_file=image_input,
     	display_image='No',
-    	output_file='./out/1.rotated.jpg',
+    	output_file=image_out,
     	r_angle=0
     )
     d.run()
 
-    return True
+    return image_out
+
+
+def binarImage(image_input):
+    """
+    Биномиризация картинки, ч.б.
+    python lib/process_image.py out/2.crop.png out/3.binar.png
+    """
+
+    image_out = './out/3.binar.jpg'
+
+    # ТОДО переписать на функцию
+    os.system("lib/process_image.py {} {}".format(image_input, image_out))
+
+    return image_out
+
+
+
 
 
 ##########################################################################
@@ -57,4 +76,6 @@ if __name__ == '__main__':
         print(image_input)
 
         # отправляем в обработку
-        rotateImage(image_input)
+        image1step = rotateImage(image_input)
+
+        image3step = binarImage(image1step)

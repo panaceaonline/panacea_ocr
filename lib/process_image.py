@@ -208,8 +208,8 @@ red_edges = cv2.Canny(red, 200, 250)
 edges = blue_edges | green_edges | red_edges
 
 # Find the contours
-image, contours, hierarch = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-# image, contours, _ = cv2.findContours(skin_ycrcb, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+# image, contours, hierarch = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+contours, hierarch = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
 print hierarch
 
