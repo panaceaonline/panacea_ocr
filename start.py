@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+sys.path.append("./lib")
 
 from colorama import *
 init(autoreset=True)
@@ -34,7 +35,7 @@ def rotateImage(image_input):
         )
     sd.run()
 
-    image_out = './out/1.rotated.jpg'
+    image_out = './out/1.rotated.png'
 
     d = Deskew(
     	input_file=image_input,
@@ -47,13 +48,31 @@ def rotateImage(image_input):
     return image_out
 
 
+def cropImage(image_input):
+    """
+    Кропаем картинку, ищем текстовый блок
+
+    """
+
+    # from process_image import crop_morphology
+
+    image_out = './out/2.crop.png'
+
+    # ТОДО переписать на функцию
+    os.system("lib/crop_morphology.py {} {}".format(image_input, image_out))
+
+    # process_image(image_input, image_out)
+
+    return image_out
+
+
 def binarImage(image_input):
     """
     Биномиризация картинки, ч.б.
     python lib/process_image.py out/2.crop.png out/3.binar.png
     """
 
-    image_out = './out/3.binar.jpg'
+    image_out = './out/3.binar.png'
 
     # ТОДО переписать на функцию
     os.system("lib/process_image.py {} {}".format(image_input, image_out))
@@ -78,4 +97,6 @@ if __name__ == '__main__':
         # отправляем в обработку
         image1step = rotateImage(image_input)
 
-        image3step = binarImage(image1step)
+        image2step = cropImage(image1step)
+
+        image3step = binarImage(image2step)
