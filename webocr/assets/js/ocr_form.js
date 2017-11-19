@@ -31,6 +31,7 @@ $(document).ready(function() {
             $resultContainer.removeClass("result-default result-error");
             $resultContainer.addClass("result-success");
             $resultContainer.html(data.text);
+            $resultContainer.prepend('<img id="theImg" src="' + data.image_final +'" width=100% />');
         })
         .fail(function(jqXHR) {
             $resultContainer.removeClass("result-default result-success");

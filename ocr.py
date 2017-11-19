@@ -222,7 +222,9 @@ def start(image_input, dir_out = 'out/'):
         buf = afile.read()
         hasher.update(buf)
 
-    dir_out += hasher.hexdigest()  + '/'
+    md5 = hasher.hexdigest()
+
+    dir_out += md5  + '/'
 
     print (dir_out)
 
@@ -264,11 +266,19 @@ def start(image_input, dir_out = 'out/'):
     text = extractTextTesseract(image3step)
     print (len(text))
 
-    domain = 'http://d96ee068.ngrok.io'
+    domain = 'http://fb694534.ngrok.io'
 
     text.update({
         'image_original': '{}/{}0.original.png'.format(domain, dir_out),
         'image_final': '{}/{}3.2.clean.png'.format(domain, dir_out),
+        'md5': md5,
+        'blood':
+            {
+                'erythrocyte': 4.7,
+                'hemoglobin': 118.1,
+                'leukocyte': 5.3,
+                'thrombocyte': 153,
+            }
     })
 
     return text

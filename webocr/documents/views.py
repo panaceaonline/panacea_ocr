@@ -1,3 +1,6 @@
+#!/usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+
 from django.http.response import JsonResponse
 from django.views.generic.base import View, TemplateView
 from django.views.decorators.csrf import csrf_exempt
@@ -17,13 +20,17 @@ class OcrView(View):
         sys.path.append("../")
         from ocr import start
 
-        with Image.open(request.FILES['image']) as image:
-            sharpened_image = image.filter(ImageFilter.SHARPEN)
-            # api.SetImage(sharpened_image)
-            # utf8_text = api.GetUTF8Text()
+        try:
+            with Image.open(request.FILES['image']) as image:
+                sharpened_image = image.filter(ImageFilter.SHARPEN)
+                # api.SetImage(sharpened_image)
+                # utf8_text = api.GetUTF8Text()
 
-            sharpened_image.save('out/0.original.png')
-            text = start('out/0.original.png')
+                sharpened_image.save('out/0.original.png')
+                text = start('out/0.original.png')
+
+        except Exception as e:
+            text = {'error':'Ошибка работы'}
 
         return JsonResponse(text)
 ocr_view = csrf_exempt(OcrView.as_view())
