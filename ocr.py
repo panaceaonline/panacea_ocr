@@ -111,7 +111,7 @@ def extractTextTesseract(image_input):
     import pytesseract
 
     def countWords(text):
-        "Чистим текст и остовляем слова больше 2х символов"
+        "Чистим текст и оставляем слова больше 2х символов"
 
         import re
         clear = re.findall(u"[а-яА-Яa-zA-Z]+", text, re.UNICODE)
@@ -124,7 +124,7 @@ def extractTextTesseract(image_input):
         return clear_list
 
     def correctWords(text_list):
-        "Отправляем наш сканированные список на проверку по словарю"
+        "Отправляем наш сканированные списки на проверку по словарю"
 
         import nlp
         # cor = nlp.correct_words(text_list)
@@ -148,7 +148,7 @@ def extractTextTesseract(image_input):
         return metrika
 
     def list_diff(list1, list2):
-        "Определяем слова не из словаря"
+        "Выделяем слова не из словаря"
 
         list_diff = list(set(list1)-set(list2))
         print('Diff ---------------')
