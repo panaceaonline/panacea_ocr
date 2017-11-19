@@ -8,13 +8,20 @@ import shutil
 import hashlib
 sys.path.append("./lib")
 
+home = '/home/rustam/projects/panacea_ocr/'
+sys.path.append(home)
+
+
 from colorama import *
 init(autoreset=True)
 
 from lib.decorator import *
 
+dir_out = 'out/'
+
+
 @decor_function_call
-def rotateImage(image_input):
+def rotateImage(image_input, dir_out):
     """
     Ищем угол поворота картинки
     https://github.com/kakul/Alyn
@@ -53,7 +60,7 @@ def rotateImage(image_input):
 
 
 @decor_function_call
-def cropImage(image_input):
+def cropImage(image_input, dir_out):
     """
     Кропаем картинку, ищем текстовый блок
 
@@ -64,7 +71,7 @@ def cropImage(image_input):
     image_out = dir_out + '2.crop.png'
 
     # ТОДО переписать на функцию
-    os.system("lib/crop_morphology.py {} {}".format(image_input, image_out))
+    os.system(home + "lib/crop_morphology.py {} {}".format(image_input, image_out))
 
     # process_image(image_input, image_out)
 
@@ -87,7 +94,7 @@ def cropImage(image_input):
 
 
 @decor_function_call
-def cleanImage(image_input):
+def cleanImage(image_input, dir_out):
     """
     Используем шел скрипт textcleaner
     http://www.fmwconcepts.com/imagemagick/textcleaner/index.php
@@ -97,7 +104,7 @@ def cleanImage(image_input):
     # options = ' -g -e stretch -f 25 -o 20 -t 30 -u -s 1 -T -p 20 '
     options = ' -T -p 20 '
 
-    os.system("sh lib/textcleaner {} {} {}".format(options, image_input, image_out))
+    os.system("sh {}lib/textcleaner {} {} {}".format(home, options, image_input, image_out))
 
     return image_out
 
@@ -126,9 +133,9 @@ def extractTextTesseract(image_input):
     def correctWords(text_list):
         "Отправляем наш сканированные списки на проверку по словарю"
 
-        import nlp
+        import lib.nlp
         # cor = nlp.correct_words(text_list)
-        cor = nlp.spell(text_list)
+        cor = lib.nlp.spell(text_list)
         # cor = list(set(cor))
         # print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
         cor_len = len(cor)
@@ -176,7 +183,7 @@ def extractTextTesseract(image_input):
     return d
 
 
-def rescaleImage(image_input, width=1000):
+def rescaleImage(image_input, dir_out, width=1000):
     """
     Увеличиваем размерчик
     convert example.png -resize 200 example.png
@@ -189,7 +196,7 @@ def rescaleImage(image_input, width=1000):
     return image_out
 
 
-def angleImage(image_input, angle=90):
+def angleImage(image_input, dir_out, angle=90):
     """
     Поворот картинки по 90 градусов
     """
@@ -200,6 +207,71 @@ def angleImage(image_input, angle=90):
 
     return image_out
 
+
+def start(image_input, dir_out = 'out/'):
+    """
+    Основные шаги, главная функция
+    """
+
+    # делаем папку с мд5 именем по файлу
+    # dir_out += hashlib.md5(image_input).hexdigest() + '/'
+
+
+    hasher = hashlib.md5()
+    with open(str(image_input), 'rb') as afile:
+        buf = afile.read()
+        hasher.update(buf)
+
+    dir_out += hasher.hexdigest()  + '/'
+
+    print (dir_out)
+
+    if os.path.exists(dir_out):
+        shutil.rmtree(dir_out)
+    os.makedirs(dir_out)
+
+    os.system("convert {} {}".format(image_input, dir_out + '0.original.png'))
+
+    # начинаем обработку
+    # rescaleInput = rescaleImage(image_input, width=2000)
+
+    image1step = rotateImage(image_input=image_input, dir_out=dir_out)
+    text_dict = extractTextTesseract(image1step)
+    # проверяем правильно ли мы повернули
+    maxmet = 0
+    angle = 0
+    # if int(text_dict['metrika'])<0.5:
+    #     print('Маленькая метрика: ')
+    #     for i in range(3):
+    #         angle += 90
+    #         print i, angle
+    #         imagestep = angleImage(image_input=image1step, angle=angle)
+    #         text_dict = extractTextTesseract(image1step)
+    #         if text_dict['metrika']>maxmet:
+    #             maxmet = text_dict['metrika']
+    #             finalrotated = imagestep
+    #             print ('!!!!Selected', str(maxmet))
+    #             print('--------------------')
+    #
+    # if finalrotated:
+    #     image1step = finalrotated
+
+    image2step = cropImage(image_input=image1step, dir_out=dir_out)
+    rescaled = rescaleImage(image2step, dir_out, width=1000)
+    text = extractTextTesseract(rescaled)
+
+    image3step = cleanImage(image_input=rescaled, dir_out=dir_out)
+    text = extractTextTesseract(image3step)
+    print (len(text))
+
+    domain = 'http://d96ee068.ngrok.io'
+
+    text.update({
+        'image_original': '{}/{}0.original.png'.format(domain, dir_out),
+        'image_final': '{}/{}3.2.clean.png'.format(domain, dir_out),
+    })
+
+    return text
 
 
 
@@ -214,45 +286,4 @@ if __name__ == '__main__':
     if image_input:
         print(image_input)
 
-        # делаем папку с мд5 именем по файлу
-        dir_out = 'out/'
-        dir_out += hashlib.md5(image_input).hexdigest() + '/'
-        print (dir_out)
-
-        if os.path.exists(dir_out):
-            shutil.rmtree(dir_out)
-        os.makedirs(dir_out)
-
-        os.system("convert {} {}".format(image_input, dir_out + '0.original.png'))
-
-        # начинаем обработку
-        # rescaleInput = rescaleImage(image_input, width=2000)
-
-        image1step = rotateImage(image_input=image_input)
-        text_dict = extractTextTesseract(image1step)
-        # проверяем правильно ли мы повернули
-        maxmet = 0
-        angle = 0
-        # if int(text_dict['metrika'])<0.5:
-        #     print('Маленькая метрика: ')
-        #     for i in range(3):
-        #         angle += 90
-        #         print i, angle
-        #         imagestep = angleImage(image_input=image1step, angle=angle)
-        #         text_dict = extractTextTesseract(image1step)
-        #         if text_dict['metrika']>maxmet:
-        #             maxmet = text_dict['metrika']
-        #             finalrotated = imagestep
-        #             print ('!!!!Selected', str(maxmet))
-        #             print('--------------------')
-        #
-        # if finalrotated:
-        #     image1step = finalrotated
-
-        image2step = cropImage(image_input=image1step)
-        rescaled = rescaleImage(image2step, width=1000)
-        text = extractTextTesseract(rescaled)
-
-        image3step = cleanImage(image_input=rescaled)
-        text = extractTextTesseract(image3step)
-        print (len(text))
+        start(image_input)

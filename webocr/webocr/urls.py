@@ -1,7 +1,7 @@
-"""webocr URL Configuration
+"""ocr_with_django URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
+    https://docs.djangoproject.com/en/1.10/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf.urls.static import static
+from django.conf import settings
+
+from documents.views import ocr_view, ocr_form_view
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-]
+    url(r'^ocr/', ocr_view, name='ocr_view'),
+    url(r'^$', ocr_form_view, name='ocr_form_view'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

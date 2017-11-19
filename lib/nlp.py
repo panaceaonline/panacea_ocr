@@ -5,9 +5,12 @@ import sys
 import os.path
 import json
 import hunspell
+sys.path.append("./lib")
+# sys.path.append("/home/rustam/projects/panacea_ocr/lib/")
 
 # spellchecker = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
-spellchecker = hunspell.HunSpell('./lib/dict/Russian.dic', './lib/dict/Russian.aff')
+spellchecker = hunspell.HunSpell('/home/rustam/projects/panacea_ocr/lib/dict/Russian.dic',
+'/home/rustam/projects/panacea_ocr/lib/dict/Russian.aff')
 # spellchecker = hunspell.HunSpell('./lib/dict/med.blood.dic','./lib/dict/Russian.aff')
 # spellchecker = hunspell.add_dic('./lib/dict/med.blood.dic')
 
