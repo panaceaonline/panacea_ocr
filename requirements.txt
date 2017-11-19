@@ -20,3 +20,5 @@ scikit-image==0.13.1
 scipy==1.0.0
 six==1.11.0
 subprocess32==3.2.7
+
+django
