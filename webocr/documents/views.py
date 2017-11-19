@@ -30,6 +30,7 @@ class OcrView(View):
                 text = start('out/0.original.png')
 
         except Exception as e:
+            print e
             text = {'error':'Ошибка работы'}
 
         return JsonResponse(text)

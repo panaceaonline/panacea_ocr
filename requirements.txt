@@ -22,3 +22,4 @@ six==1.11.0
 subprocess32==3.2.7
 
 django
+azure-storage

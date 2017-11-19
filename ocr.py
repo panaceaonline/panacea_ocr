@@ -125,9 +125,9 @@ def extractTextTesseract(image_input):
         clear_list = [s for s in clear if len(s) > 2]
         clear_list = sorted(clear_list)
 
-        # print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
+        print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
         clear_len = len(clear_list)
-        # print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
+        print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
         return clear_list
 
     def correctWords(text_list):
@@ -137,9 +137,9 @@ def extractTextTesseract(image_input):
         # cor = nlp.correct_words(text_list)
         cor = lib.nlp.spell(text_list)
         # cor = list(set(cor))
-        # print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
+        print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
         cor_len = len(cor)
-        # print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
+        print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
         return cor
 
     def metrika(list1, list2):
@@ -178,7 +178,7 @@ def extractTextTesseract(image_input):
         # 'text_no_spell': list_diff,
         # 'angle': 0,
     }
-    print(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False))
+    # print(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False))
 
     return d
 
@@ -242,21 +242,22 @@ def start(image_input, dir_out = 'out/'):
     # проверяем правильно ли мы повернули
     maxmet = 0
     angle = 0
-    # if int(text_dict['metrika'])<0.5:
-    #     print('Маленькая метрика: ')
-    #     for i in range(3):
-    #         angle += 90
-    #         print i, angle
-    #         imagestep = angleImage(image_input=image1step, angle=angle)
-    #         text_dict = extractTextTesseract(image1step)
-    #         if text_dict['metrika']>maxmet:
-    #             maxmet = text_dict['metrika']
-    #             finalrotated = imagestep
-    #             print ('!!!!Selected', str(maxmet))
-    #             print('--------------------')
-    #
-    # if finalrotated:
-    #     image1step = finalrotated
+    finalrotated = ''
+    if int(text_dict['metrika'])<0.5:
+        print('Маленькая метрика: ' + str(text_dict['metrika']))
+        for i in range(3):
+            angle += 90
+            print i, angle
+            imagestep = angleImage(image_input=image1step, dir_out=dir_out, angle=angle)
+            text_dict = extractTextTesseract(imagestep)
+            if text_dict['metrika']>maxmet:
+                maxmet = text_dict['metrika']
+                finalrotated = imagestep
+                print ('!!!!Selected', str(maxmet))
+                print('--------------------')
+
+        if finalrotated:
+            image1step = finalrotated
 
     image2step = cropImage(image_input=image1step, dir_out=dir_out)
     rescaled = rescaleImage(image2step, dir_out, width=1000)
