@@ -121,26 +121,46 @@ def extractTextTesseract(image_input):
         print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
         clear_len = len(clear_list)
         print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
-        return clear_list, clear_len
+        return clear_list
 
     def correctWords(text_list):
         "Отправляем наш сканированные список на проверку по словарю"
 
         import nlp
-
-        cor = nlp.correct_words(text_list)
-        print(Fore.YELLOW + json.dumps(cor,  sort_keys=True, ensure_ascii=False))
+        # cor = nlp.correct_words(text_list)
+        cor = nlp.spell(text_list)
+        # cor = list(set(cor))
+        print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
         cor_len = len(cor)
         print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
-
         return cor
 
+    def metrika(list1, list2):
+        "Метрика для оценки распознования, чем больше 0 тем лучше"
+
+        len1 = len(list1)
+        len2 = len(list2)
+        metrika = 0
+        if len2>0:
+            metrika = round((len2*1.0)/len1, 2)
+
+        print (Fore.YELLOW + 'METRIKA: ' + str(metrika))
+        return metrika
+
+    def list_diff(list1, list2):
+        "Определяем слова не из словаря"
+
+        list_diff = list(set(list1)-set(list2))
+        print('Diff ---------------')
+        print(json.dumps(list_diff,  sort_keys=True, ensure_ascii=False))
+        return list_diff
 
     out_text = pytesseract.image_to_string(Image.open(image_input), lang='rus')
 
-    clear_list, clear_len = countWords(out_text)
-
+    clear_list = countWords(out_text)
     correct_list = correctWords(clear_list)
+    metrika(clear_list, correct_list)
+    list_diff(clear_list, correct_list)
 
     return out_text
 

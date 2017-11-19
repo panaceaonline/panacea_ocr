@@ -15,8 +15,8 @@ def correct_words(words, add_to_dict=[]):
     https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
     """
 
-    enc = spellchecker.get_dic_encoding()   # get the encoding for later use in decode()
-    print (enc)
+    # enc = spellchecker.get_dic_encoding()   # get the encoding for later use in decode()
+    # print (enc)
 
     # add custom words to the dictionary
     for w in add_to_dict:
@@ -36,6 +36,18 @@ def correct_words(words, add_to_dict=[]):
 
     return corrected
 
+def spell(words):
+    """
+    Проверка, есть ли в словаре заданное слово
+    """
+
+    correct = []
+    for w in words:
+        ok = spellchecker.spell(w)   # check spelling
+        if ok:
+            correct.append(w)
+
+    return correct
 
 
 if __name__ == '__main__':
