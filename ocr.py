@@ -203,6 +203,7 @@ def angleImage(image_input, dir_out, angle=90):
 
     image_out = dir_out + 'rotate{}.png'.format(angle)
 
+    # ТОДО Тупят повороты, надо убрать инфу о повороте из методанных
     os.system("convert {} -rotate {} -strip {}".format(image_input, angle, image_out))
 
     return image_out
