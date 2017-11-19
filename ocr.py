@@ -118,9 +118,9 @@ def extractTextTesseract(image_input):
         clear_list = [s for s in clear if len(s) > 2]
         clear_list = sorted(clear_list)
 
-        print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
+        # print(json.dumps(clear_list,  sort_keys=True, ensure_ascii=False))
         clear_len = len(clear_list)
-        print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
+        # print (Fore.YELLOW + 'Количество слов: ' + str(clear_len))
         return clear_list
 
     def correctWords(text_list):
@@ -130,9 +130,9 @@ def extractTextTesseract(image_input):
         # cor = nlp.correct_words(text_list)
         cor = nlp.spell(text_list)
         # cor = list(set(cor))
-        print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
+        # print(json.dumps(cor,  sort_keys=True, ensure_ascii=False))
         cor_len = len(cor)
-        print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
+        # print (Fore.YELLOW + 'Количество корректных слов: ' + str(cor_len))
         return cor
 
     def metrika(list1, list2):
@@ -159,10 +159,21 @@ def extractTextTesseract(image_input):
 
     clear_list = countWords(out_text)
     correct_list = correctWords(clear_list)
-    metrika(clear_list, correct_list)
     list_diff(clear_list, correct_list)
 
-    return out_text
+    d = {
+        'metrika': metrika(clear_list, correct_list),
+        'text': out_text,
+        'text_clear': clear_list,
+        'text_clear_len': len(clear_list),
+        'text_spell': correct_list,
+        'text_spell_len': len(correct_list),
+        # 'text_no_spell': list_diff,
+        # 'angle': 0,
+    }
+    print(json.dumps(d, indent=2, sort_keys=True, ensure_ascii=False))
+
+    return d
 
 
 def rescaleImage(image_input, width=1000):
@@ -174,6 +185,18 @@ def rescaleImage(image_input, width=1000):
     image_out = dir_out + '3.1.rescale.png'
 
     os.system("convert {} -resize {} -auto-level {}".format(image_input, width, image_out))
+
+    return image_out
+
+
+def angleImage(image_input, angle=90):
+    """
+    Поворот картинки по 90 градусов
+    """
+
+    image_out = dir_out + 'rotate{}.png'.format(angle)
+
+    os.system("convert {} -rotate {} {}".format(image_input, angle, image_out))
 
     return image_out
 
@@ -206,13 +229,29 @@ if __name__ == '__main__':
         # rescaleInput = rescaleImage(image_input, width=2000)
 
         image1step = rotateImage(image_input=image_input)
-        text = extractTextTesseract(image1step)
-        print (len(text))
+        text_dict = extractTextTesseract(image1step)
+        # проверяем правильно ли мы повернули
+        maxmet = 0
+        angle = 0
+        # if int(text_dict['metrika'])<0.5:
+        #     print('Маленькая метрика: ')
+        #     for i in range(3):
+        #         angle += 90
+        #         print i, angle
+        #         imagestep = angleImage(image_input=image1step, angle=angle)
+        #         text_dict = extractTextTesseract(image1step)
+        #         if text_dict['metrika']>maxmet:
+        #             maxmet = text_dict['metrika']
+        #             finalrotated = imagestep
+        #             print ('!!!!Selected', str(maxmet))
+        #             print('--------------------')
+        #
+        # if finalrotated:
+        #     image1step = finalrotated
 
         image2step = cropImage(image_input=image1step)
         rescaled = rescaleImage(image2step, width=1000)
         text = extractTextTesseract(rescaled)
-        print (len(text))
 
         image3step = cleanImage(image_input=rescaled)
         text = extractTextTesseract(image3step)
