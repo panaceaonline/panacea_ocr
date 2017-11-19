@@ -203,7 +203,7 @@ def angleImage(image_input, dir_out, angle=90):
 
     image_out = dir_out + 'rotate{}.png'.format(angle)
 
-    os.system("convert {} -rotate {} {}".format(image_input, angle, image_out))
+    os.system("convert {} -rotate {} -strip {}".format(image_input, angle, image_out))
 
     return image_out
 
@@ -281,6 +281,8 @@ def start(image_input, dir_out = 'out/'):
                 'thrombocyte': 153,
             }
     })
+
+    print(text['image_final'])
 
     return text
 
